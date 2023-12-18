@@ -6,28 +6,36 @@ class Item:
                        7: "светлый",
                        8: "съедобный", 9: "несъедобный", 10: "легкий", 11: "хрупкий", 12: "тяжелый"}
 
-    def __init__(self, name, test_active=0, cost=0):
-        self.name = name
-        self._numbers = []
-        Item.__count += 1
-        Item.__count_list.append(Item.__count)
-        self.id_item = Item.__count
-        self._cost = cost
-        self.item_test_active = test_active
-        self._list_tags = Item._list_base_tags
-        # self._list_tags = {1: "габаритный", 2: "маленький", 3: "скользкий", 4: "твердый", 5: "мягкий", 6: "темный",
-        #                    7: "светлый",
-        #                    8: "съедобный", 9: "несъедобный", 10: "легкий", 11: "хрупкий", 12: "тяжелый"}
-        self._id_tags = dict()
-        self.descr = ""
-        if self.item_test_active == 0:
-            self.choose_tags()
-            self.description()
-            self._delivery_date()
-        self._uid_gen()
+    list_items = dict()
 
-    def get_id_item(self):
-        return self.id_item
+    def __init__(self, name="Item_from_json", test_active=0, cost=0):
+        if name != "Item_from_json":
+
+            self.name = name
+            self._numbers = []
+            Item.__count += 1
+            Item.__count_list.append(Item.__count)
+            self._id_item = Item.__count
+            self._cost = cost
+            self.item_test_active = test_active
+            self._list_tags = Item._list_base_tags
+            # self._list_tags = {1: "габаритный", 2: "маленький", 3: "скользкий", 4: "твердый", 5: "мягкий", 6: "темный",
+            #                    7: "светлый",
+            #                    8: "съедобный", 9: "несъедобный", 10: "легкий", 11: "хрупкий", 12: "тяжелый"}
+            self._id_tags = dict()
+            self.descr = ""
+            if self.item_test_active == 0:
+                self.choose_tags()
+                self.description()
+                self._delivery_date()
+            self._uid_gen()
+
+            Item.list_items[self._id_item] = self
+
+
+    @property
+    def id_item(self):
+        return self._id_item
 
     def choose_tags(self):
         """Выбор тегов для предмета или добавление, если отсутствует подходящий"""
@@ -114,6 +122,9 @@ class Item:
     def __hash__(self):
         return self.id_item
 
+    # def __hash__(self):
+    #     return hash(str(self.id_item)) # - альтернатива по hash
+
     def _uid_gen(self):
         """Генератор уникального id"""
         import uuid
@@ -173,11 +184,11 @@ class Item:
 
     def __str__(self):
         """Представление str для предмета"""
-        return f"[Item: {self.name}, ID: {self.id_item}, UID: {self.it_uid}, description: {self.descr}, delivery date is {self.deldate} tags:{self._id_tags}]"
+        return f"[Item: {self.name}, ID: {self.id_item}, UID: {self.it_uid}, description: {self.descr}, delivery date is {self.deldate} tags:{self._id_tags}, cost is {self.cost}]"
 
     def __repr__(self):
         """Представление repr для предмета"""
-        return f"[Item: {self.name}, ID: {self.id_item}, UID: {self.it_uid}, description: {self.descr}, delivery date is {self.deldate} tags:{self._id_tags}]"
+        return f"[Item: {self.name}, ID: {self.id_item}, UID: {self.it_uid}, description: {self.descr}, delivery date is {self.deldate} tags:{self._id_tags}, cost:{self.cost}]"
 
     @staticmethod
     def is_tagged(tag: dict):
@@ -254,10 +265,94 @@ class Item:
         import copy
         new_copy = copy.deepcopy(self)
         new_copy.it_uid = new_copy._uid_gen()
-        new_copy.id_item = sorted(Item.__count_list)[-1] + 1
-        Item.__count_list.append(new_copy.id_item)
-        Item.__count = new_copy.id_item
+        new_copy._id_item = sorted(Item.__count_list)[-1] + 1
+        Item.__count_list.append(new_copy._id_item)
+        Item.__count = new_copy._id_item
         return new_copy
+
+    def create_from_json_message(self, json_message):
+        """Создает Item из переменной текстового формата json"""
+        import json
+        data_json = json.loads(json_message)
+        print(data_json)
+        self.name = data_json["name"]
+        self.descr = data_json["descr"]
+        self.deldate = data_json["deldate"]
+        self._id_item = data_json["id_item"]
+        self.it_uid = data_json["it_uid"]
+        self._id_tags = data_json["_id_tags"]
+        self.cost = data_json["cost"]
+        return self
+
+    def create_from_json_file(self, json_path):
+        """Создает Item из файла с json текстом"""
+        import json
+        with open(json_path, 'r') as file_from_path:
+            data_json = json.load(file_from_path)
+            print(data_json)
+            self.name = data_json["name"]
+            self.descr = data_json["descr"]
+            self.deldate = data_json["deldate"]
+            self._id_item = data_json["id_item"]
+            self.it_uid = data_json["it_uid"]
+            self._id_tags = data_json["_id_tags"]
+            self.cost = data_json["cost"]
+            # print(self)
+
+    def save_as_json_var(self):
+        """Сохраняет Item в переменную текстового формата json)"""
+        import json
+        data_item = {'name': self.name, 'descr': self.descr, 'deldate': self.deldate_item.strftime('%Y-%m-%d'),
+                     'id_item': self.id_item, 'it_uid': str(self.it_uid), 'id_tags': self._id_tags, 'cost': self.cost}
+        json_mes = json.dumps(data_item, indent=4)
+        return json_mes
+
+    def save_as_json_file(self):
+        """Сохраняет Item в файл формата json)"""
+        import json
+        data_item = {'name': self.name, 'descr': self.descr, 'deldate': self.deldate_item.strftime('%Y-%m-%d'),
+                     'id_item': self.id_item, 'it_uid': str(self.it_uid), 'id_tags': self._id_tags, 'cost': self.cost}
+        with open('item_result.json', 'w') as file_json_from_item:
+            json.dump(data_item, file_json_from_item, indent=4, ensure_ascii=True)
+
+
+
+# json_message = """
+#         {
+#           "name": "диван",
+#           "id_item": 12242,
+#           "descr": "какой-то диван",
+#           "deldate": "2022-01-01",
+#           "it_uid": "2dc97de8-3974-4424-bc2e-7b0d36bef067",
+#           "_id_tags": {
+#             "1": "габаритный",
+#             "2": "маленький"
+#             },
+#           "cost": 500
+#         }
+#         """
+# import json
+#
+# print(json_message)
+# print(type(json_message))
+# data = json.loads(json_message)
+# print(data)
+# for attr in data:
+#     print(data[attr])
+#     name = data["name"]
+#     descr = data["descr"]
+#     deldate = data["deldate"]
+#     it_uid = data["it_uid"]
+#     _id_tags = data["_id_tags"]
+#     cost = data["cost"]
+#
+# new_json = json.dumps(data, indent=2)
+# print(new_json)
+# with open('item.json', 'w') as file_json:
+#     json.dump(data, file_json, indent=4, ensure_ascii=True)
+# with open('item.json', 'r') as file:
+#     data = json.load(file)
+# print(data)
 
 # import json
 #
@@ -297,6 +392,7 @@ class Item:
 
 # f.cost = 300
 # g.cost = 400
+# gg.cost = 100
 # print(f.cost)
 # print(g.cost)
 # if f > g:
@@ -356,3 +452,31 @@ class Item:
 # f.rm_tags()
 #
 # print(f)
+
+# print(f.save_as_json_var())
+# f.save_as_json_file()
+
+# json_message = """
+#         {
+#           "name": "диван",
+#           "id_item": 12242,
+#           "descr": "какой-то диван",
+#           "deldate": "2022-01-01",
+#           "it_uid": "2dc97de8-3974-4424-bc2e-7b0d36bef067",
+#           "_id_tags": {
+#             "1": "габаритный",
+#             "2": "маленький"
+#             },
+#           "cost": 500
+#         }
+#         """
+# f = Item()
+# # f.create_from_json_file("item.json")
+# f.create_from_json_message(json_message)
+# print(f)
+# print(g)
+# print(gg)
+# print(hash(f))
+# print(hash(g))
+# print(hash(gg))
+# print(Item.list_items)

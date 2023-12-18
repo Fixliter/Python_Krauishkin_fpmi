@@ -1,0 +1,5 @@
+{
+    "title": "Shop",
+    "Items:": "[[Item: \u043a\u0440\u0435\u0441\u043b\u043e, ID: 1, UID: 79a740fc-9123-4bd9-a697-d811ec194ab4, description: dg, delivery date is 0002-02-02 tags:{'1': '\u0433\u0430\u0431\u0430\u0440\u0438\u0442\u043d\u044b\u0439', '2': '\u043c\u0430\u043b\u0435\u043d\u044c\u043a\u0438\u0439', '3': '\u0441\u043a\u043e\u043b\u044c\u0437\u043a\u0438\u0439', '4': '\u0442\u0432\u0435\u0440\u0434\u044b\u0439'}, cost:100], [Item: \u0442\u0443\u043c\u0431\u0430, ID: 2, UID: 55b0f9a8-6152-4b33-9886-d4f3f4afe038, description: fg, delivery date is 0203-03-03 tags:{'2': '\u043c\u0430\u043b\u0435\u043d\u044c\u043a\u0438\u0439', '9': '\u043d\u0435\u0441\u044a\u0435\u0434\u043e\u0431\u043d\u044b\u0439'}, cost:200]]",
+    "date_hub": "2023-12-18"
+}
