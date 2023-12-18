@@ -32,10 +32,22 @@ class Item:
 
             Item.list_items[self._id_item] = self
 
-
     @property
     def id_item(self):
+        """Возвращает ID Item"""
         return self._id_item
+
+    @id_item.setter
+    def id_item(self, new_id):
+        """Изменяет ID Item и проверяет не существует ли уже iD, данный метод рекомендуется использовать после
+         формирования основной базы данных Items, так как не реализована корректировка основного механизма определения
+          ID последовательностью count и при штатном добавлении Item возможно дублирование ID,тогда может помочь
+           уникальный uid, пока не будет реализована модификация основного механизма создания ID с учетом
+            введенных ID вручную"""
+        if new_id not in Item.list_items.keys():
+            self._id_item = new_id
+        else:
+            raise ValueError(f"{new_id} - введенный ID уже существует, выберите другой")
 
     def choose_tags(self):
         """Выбор тегов для предмета или добавление, если отсутствует подходящий"""
@@ -314,8 +326,6 @@ class Item:
                      'id_item': self.id_item, 'it_uid': str(self.it_uid), 'id_tags': self._id_tags, 'cost': self.cost}
         with open('item_result.json', 'w') as file_json_from_item:
             json.dump(data_item, file_json_from_item, indent=4, ensure_ascii=True)
-
-
 
 # json_message = """
 #         {

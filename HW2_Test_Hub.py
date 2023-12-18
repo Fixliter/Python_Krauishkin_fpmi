@@ -100,7 +100,6 @@ class TestItem(unittest.TestCase):
         del item4
         # Реализована проверку того, что при добавлении тэгов меняется значение len(item)
 
-
     def test_equal_tags(self):
         """Проверка того что если к предмету добавить два идентичных тега - их количество будет один"""
         item5 = It.Item("тумба", 1)
@@ -113,10 +112,48 @@ class TestItem(unittest.TestCase):
         cnt_sametags = Counter(item5._id_tags.values())
         for k in cnt_sametags:
             self.assertTrue(cnt_sametags[k] == 1, f"Теги повторяются, счетчики тегов: {cnt_sametags}")
-        # for i in range(len(cnt_sametags)):
-            # self.assertTrue([*cnt_sametags.values()][i] == 1, f"Теги повторяются, счетчики тегов: {cnt_sametags}")
-            # print(int([*cnt_sametags.values()][i]) == 1)
 
+        # for i in range(len(cnt_sametags)):
+        # self.assertTrue([*cnt_sametags.values()][i] == 1, f"Теги повторяются, счетчики тегов: {cnt_sametags}")
+        # print(int([*cnt_sametags.values()][i]) == 1)
+
+    @staticmethod
+    def gen_item():
+        import random
+        import datetime
+        import uuid
+
+        gen_name = random.choice(["диван", "кресло", "комод", "стул", "стол", "шкаф", "тумба", "лампа", "мяч"])
+        item_gen = It.Item(gen_name, 1)
+        item_gen.descr = gen_descr = random.choice(
+            ["Документы подписать", "Передать водителю", "Реализовать первым", "С повреждением", "б.у.",
+             "После восстановления", "Новый", "Иванову", "Продано"])
+        item_gen.id_item = gen_item_id = random.randint(1, 111111111111)
+        item_gen.deldate_item = gen_deldate = str(datetime.date(2009, 12, 4) + datetime.timedelta(
+            days=random.randint(1, 14111)))
+        _tags = {1: "габаритный", 2: "маленький", 3: "скользкий", 4: "твердый", 5: "мягкий", 6: "темный",
+                 7: "светлый",
+                 8: "съедобный", 9: "несъедобный", 10: "легкий", 11: "хрупкий", 12: "тяжелый"}
+        # gen_id_tags = _tags[random.randrange(len(_tags))]
+        gen_id_tags = dict()
+        for i in range(random.randint(1, 4)):
+            item_gen._id_tags = gen_id_tags[random.randrange(1, len(_tags))] = _tags[random.randrange(1, len(_tags))]
+        item_gen.it_uid = gen_it_uid = uuid.uuid4()
+        item_gen.cost = gen_cost = random.randrange(10, 2000, 20)
+        yield item_gen
+
+        # print(gen_name)
+        # print(gen_descr)
+        # print(gen_item_id)
+        # print(gen_deldate)
+        # print(gen_id_tags)
+        # print(gen_it_uid)
+        # print(gen_cost)
+        # print(item_gen)
+
+
+print(TestItem.gen_item())
+print(type(TestItem.gen_item()))
 
 if TestItem.__name__ == '__main__':
     unittest.main(argv=['first-arg-is-ignored'], exit=False, verbosity=2)
