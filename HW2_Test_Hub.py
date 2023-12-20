@@ -45,6 +45,127 @@ class TestHub(unittest.TestCase):
         # print(temp_item)
         # print(self.hub1)
 
+    def test_hub_add_item(self):
+        """Проверка добавления нескольких item"""
+        print(f"Выполняется 'test_hub_add_item'")
+        for i in range(3):
+            for item in TestItem.gen_item():
+                print(item)
+                self.hub1.__add_item__(item)
+        self.assertEqual(len(self.hub1), 3,
+                         f"Количество добавленных предметов не соответствует результату метода Len() после добавления Items")
+        print(
+            f"Проверка добавления предметов и метода len прошла УСПЕШНО, добавлено {len(self.hub1)} - ожидалось  - 5 ")
+        self.hub1.__clear_items__()
+
+    def test_hub_add_new_item(self):
+        """Проверка вызова создания нового Item от Hub и добавление его в Hub"""
+        print(f"Выполняется 'test_hub_add_new_item'")
+        self.hub1.__add_new_item__()
+        print(self.hub1)
+        self.assertEqual(len(self.hub1), 1,
+                         f"Количество добавленных предметов не соответствует результату метода Len() после создания и добавления нового Item")
+        print(
+            f"Проверка создания нового item от Hub и добавления в Hub прошла УСПЕШНО, добавлено {len(self.hub1)} - ожидалось  - 1 ")
+        self.hub1.__clear_items__()
+
+    def test_hub_del_index_item(self):
+        """Проверка удаления item по индексу из Hub"""
+        print(f"Выполняется 'test_hub_del_index_item'")
+        for i in range(3):
+            for item in TestItem.gen_item():
+                print(item)
+                self.hub1.__add_item__(item)
+        print(self.hub1)
+        temp_it = self.hub1.__getitem__(0)
+        self.hub1.__del_index_item__(0)
+        print(self.hub1)
+        self.assertEqual(len(self.hub1), 2,
+                         f"Количество  предметов не соответствует результату метода Len() после добавления 3 Item и удаления одного Item")
+        self.assertNotIn(temp_it, self.hub1._items, f"Item ({temp_it}) не удален из Hub")
+        print(
+            f"Проверка удаления Item по индексу из Hub прошла УСПЕШНО")
+        self.hub1.__clear_items__()
+
+    def test_hub_del_item(self):
+        """Проверка удаления item по первому вхождению из Hub"""
+        print(f"Выполняется 'test_hub_del_item'")
+        for i in range(3):
+            for item in TestItem.gen_item():
+                print(item)
+                self.hub1.__add_item__(item)
+                if i == 0:
+                    temp_it = item
+        print(self.hub1)
+        self.hub1.__del_item__(temp_it)
+        print(self.hub1)
+        self.assertEqual(len(self.hub1), 2,
+                         f"Количество предметов не соответствует результату метода Len() после добавления 3 Item и удаления одного Item")
+
+        self.assertNotIn(temp_it, self.hub1._items, f"Item ({temp_it}) не удален из Hub")
+        print(
+            f"Проверка удаления Item по первому вхождению в Hub прошла УСПЕШНО")
+        self.hub1.__clear_items__()
+
+    def test_hub_rm_item(self):
+        """Проверка удаления item по первому вхождению из Hub"""
+        print(f"Выполняется 'test_hub_rm_item'")
+        for i in range(3):
+            for item in TestItem.gen_item():
+                print(item)
+                self.hub1.__add_item__(item)
+                if i == 0:
+                    temp_it = item
+        print(self.hub1)
+        self.hub1.rm_item(temp_it)
+        print(self.hub1)
+        self.assertEqual(len(self.hub1), 2,
+                         f"Количество предметов не соответствует результату метода Len() после добавления 3 Item и удаления одного Item")
+
+        self.assertNotIn(temp_it, self.hub1._items, f"Item ({temp_it}) не удален из Hub")
+        print(
+            f"Проверка удаления Item по первому вхождению в Hub прошла УСПЕШНО")
+        self.hub1.__clear_items__()
+
+    def test_hub_drop_items(self):
+        """Проверка удаления коллекции(списка) items из Hub"""
+        print(f"Выполняется 'test_hub_drop_items'")
+        temp_it = []
+        for i in range(5):
+            for item in TestItem.gen_item():
+                self.hub1.__add_item__(item)
+                if i == 0 or i == 2 or i == 3:
+                    temp_it.append(item)
+        print(temp_it)
+        print(self.hub1)
+        self.hub1.drop_items(temp_it)
+        print(self.hub1)
+        self.assertEqual(len(self.hub1), 2,
+                         f"Количество предметов не соответствует результату метода Len() после добавления 3 Item и удаления одного Item")
+        for elem in temp_it:
+            self.assertNotIn(elem, self.hub1._items, f"Item ({temp_it}) не удален из Hub")
+        print(
+            f"Проверка удаления Item по первому вхождению в Hub прошла УСПЕШНО")
+        self.hub1.__clear_items__()
+
+    def test_hub_clear_items(self):
+        """Проверка очистки списка items Hub"""
+        print(f"Выполняется 'test_hub_clear_items'")
+        temp_it = []
+        for i in range(5):
+            for item in TestItem.gen_item():
+                self.hub1.__add_item__(item)
+        print(self.hub1)
+        self.hub1.__clear_items__()
+        print(self.hub1)
+        self.assertEqual(len(self.hub1), 0,
+                         f"Количество предметов (нуль предметов) не соответствует результату метода Len() после очистки списка Items")
+        empty_list = []
+        self.assertEqual(self.hub1._items, empty_list, f"Список Items в Hub не очищен")
+        print(
+            f"Проверка удаления Item по первому вхождению в Hub прошла УСПЕШНО")
+        self.hub1.__clear_items__()
+
 
 class TestItem(unittest.TestCase):
     def setUp(self):
@@ -142,6 +263,7 @@ class TestItem(unittest.TestCase):
         item_gen.cost = gen_cost = random.randrange(10, 2000, 20)
         yield item_gen
 
+        # Проверка генераций:
         # print(gen_name)
         # print(gen_descr)
         # print(gen_item_id)
@@ -152,13 +274,8 @@ class TestItem(unittest.TestCase):
         # print(item_gen)
 
 
-print(TestItem.gen_item())
-print(type(TestItem.gen_item()))
-
-if TestItem.__name__ == '__main__':
-    unittest.main(argv=['first-arg-is-ignored'], exit=False, verbosity=2)
-if TestHub.__name__ == '__main__':
-    unittest.main(argv=['first-arg-is-ignored'], exit=False, verbosity=2)
+# print(TestItem.gen_item())
+# print(type(TestItem.gen_item()))
 
 # suite = unittest.TestLoader().loadTestsFromTestCase(TestHub)
 # unittest.TextTestRunner(verbosity=2).run(suite)
@@ -166,5 +283,19 @@ if TestHub.__name__ == '__main__':
 # unittest.TextTestRunner(verbosity=2).run(suite)
 # f = TestHub()
 # g = TestItem()
+
+for i in range(3):
+    for item in TestItem.gen_item():
+        print(item)
+# adf.append(TestItem.gen_item())
+# adf.append(TestItem.gen_item())
+# adf.append(TestItem.gen_item())
+# print(adf)
+
+
+if TestItem.__name__ == '__main__':
+    unittest.main(argv=['first-arg-is-ignored'], exit=False, verbosity=2)
+if TestHub.__name__ == '__main__':
+    unittest.main(argv=['first-arg-is-ignored'], exit=False, verbosity=2)
 
 It.Item.test_active = 0
